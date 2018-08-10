@@ -1,0 +1,9 @@
+extends base_layout
+  
+block content
+  h1 #{title} - #{count}
+  ul 
+    each project in projects 
+      li 
+        a(href='/imgrater/projects/' + project.dataValues.title + '?' + project.customValues.url) #{project.dataValues.title}
+        //- a(href='/projects/?' + project.customValues.url) #{project.dataValues.title}

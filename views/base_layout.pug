@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title #{title}
+    link(href='/public/assets/fonts/mdi/css/materialdesignicons.min.css' media="all" rel="stylesheet" type="text/css")
+    link(href='/public/assets/css/font-faces.css', rel='stylesheet')
+    link(href='/public/assets/css/styles.css', rel='stylesheet')
+    block additional_styles
+    
+    script(src='/public/assets/js/socket.io/socket.io.js')
+    script(src='/public/assets/js/vue/vue.js')
+    block additional_scripts_head
+
+  body
+    block header
+      
+    block content
+      
+    block footer
+      
+      
+    script(src='/public/assets/js/master.js')    
+    block additional_scripts_footer

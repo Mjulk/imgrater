@@ -1,0 +1,87 @@
+extends base_layout
+
+block header  
+  div#site-nav
+    a(href='/imgrater/projects') Projects
+    span  | 
+    a(href='/imgrater/projects/' + title + '/best?mode=best&id=' + id + '&title=' + title) Best
+    span  | 
+    a(href='/imgrater/projects/' + title + '/worst?mode=worst&id=' + id + '&title=' + title) Worst
+    span  | 
+    a(href='/imgrater/projects/' + title + '/deletedt?mode=deleted&id=' + id + '&title=' + title) Trash
+    span  | 
+    span(v-on:click="initProject") refresh 
+  
+block content
+  div#project-content    
+
+    if files
+      div.file-meta
+        span {{filecount}}: {{votecount}} / {{possiblePairings}}
+        div.file-meta-percentage
+          div 
+            div(:style="'width:' + percentOfPossibleVotes + '%'")
+        span {{percentOfPossibleVotes}}%
+        
+      div.flex-halves
+        
+        div.file-container.left(v-bind:class="{ active: isActiveLeft }")
+          div.file-meta
+            span {{files[0].won}} / {{files[0].votes}}
+            div.file-meta-percentage
+              div 
+                div(:style="'width:' + ((files[0].won / files[0].votes) * 100) + '%'")
+            span {{Math.round((files[0].won / files[0].votes) *10000)/100}}%
+          div.file-content
+            div.file-media( v-on:click="toggleMax(true)")
+              img(:src="path + files[0].filename" v-if="files[0].type != 3")
+              video(controls autoplay loop muted v-if="files[0].type == 3") 
+                source(:src="path + files[0].filename" :type="'video/' + files[0].extension")
+                span Your browser does not support the video tag.
+            span.file-name {{files[0].filename}}
+            div.file-btn-cont
+              span.btn.btn-vote(v-on:click="vote(files[0].id, files[1].id)") Vote!
+              div.btn.btn-icon-delete(v-on:click="skipVote()") 
+                i.mdi.mdi-arrow-right-thick
+            
+        div.file-container.right(v-bind:class="{ active: isActiveRight }")
+          div.file-meta
+            span {{files[1].won}} / {{files[1].votes}}
+            div.file-meta-percentage
+              div  
+                div(:style="'width:' + ((files[1].won / files[1].votes) * 100) + '%'")
+            span {{Math.round((files[1].won / files[1].votes) *10000)/100}}%
+          div.file-content
+            div.file-media( v-on:click="toggleMax(false)")
+              img(:src="path + files[1].filename" v-if="files[1].type != 3")
+              video(controls autoplay loop muted v-if="files[1].type == 3") 
+                source(:src="path + files[1].filename" :type="'video/' + files[1].extension")
+                span Your browser does not support the video tag.
+            span.file-name {{files[1].filename}}
+            div.file-btn-cont
+              span.btn.btn-vote(v-on:click="vote(files[1].id, files[0].id)") Vote!
+              div.btn.btn-icon-delete(v-on:click="skipVote()") 
+                i.mdi.mdi-arrow-right-thick
+                             
+             
+
+block additional_scripts_footer
+  script(src='/public/assets/js/views/project.js')  
+  
+  script.
+    var project = initVue({
+      id            : #{id},
+      title         : "#{title}",
+      test          : "1",
+      files         : JSON.parse('!{files}'),
+      path          : "/public/projects/#{title}/",
+      isActiveLeft  : false,
+      isActiveRight : false,
+      filecount     : #{count},
+      votecount     : #{votecount} 
+    });
+    var siteNav = initSiteNav({
+      id            : #{id},
+      title         : "#{title}"
+    });
+    

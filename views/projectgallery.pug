@@ -1,0 +1,60 @@
+extends base_layout
+
+block header  
+  a(href='/imgrater/projects') Projects
+  span  | 
+  a(href='/imgrater/projects/' + title + '?id=' + id + '&title=' + title) Vote
+  span  | 
+  a(href='/imgrater/projects/' + title + '/best?mode=best&id=' + id + '&title=' + title) Best
+  span  | 
+  a(href='/imgrater/projects/' + title + '/worst?mode=worst&id=' + id + '&title=' + title) Worst
+  span  | 
+  a(href='/imgrater/projects/' + title + '/deletedt?mode=deleted&id=' + id + '&title=' + title) Trash
+
+  
+block content
+  div#gallery-content    
+    
+
+    if files
+      div.flex-quarters               
+        div.file-container(v-for="file in files" :id="file.filename")
+          div.file-meta
+            span {{file.won}} / {{file.votes}}
+            div.file-meta-percentage
+              div 
+                div(:style="'width:' + ((file.won / file.votes) * 100) + '%'")
+            span {{Math.round((file.won / file.votes) *10000)/100}}%
+          div.file-content
+            div.file-media(v-on:click="toggleMax(file.filename)")
+              img(:src="path + file.filename" v-if="file.type != 3")
+              video(controls loop muted v-if="file.type == 3") 
+                source(:src="path + file.filename" :type="'video/' + file.extension")
+                span Your browser does not support the video tag.
+            span.file-name {{file.filename}}
+            if mode === "deleted"
+              div.file-btn-cont  
+                div.btn.btn-icon-delete(v-on:click="restore(file.id)")
+                  i.mdi.mdi-delete-restore
+                div.btn.btn-icon-delete(v-on:click="deleteForever(file)")
+                  i.mdi.mdi-delete-forever
+            if mode === "worst"
+              div.file-btn-cont
+                div.btn.btn-icon-delete(v-on:click="markAsDeleted(file.id)") 
+                  i.mdi.mdi-delete
+              
+           
+
+block additional_scripts_footer
+  script(src='/public/assets/js/views/projectgallery.js')  
+  
+  script.
+    var project = initVue({
+      id            : #{id},
+      title         : "#{title}",
+      test          : "1",
+      files         : JSON.parse('!{files}'),
+      path          : "/public/projects/#{title}/",
+      isActive      : false
+    });
+    
